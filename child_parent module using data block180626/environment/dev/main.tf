@@ -26,5 +26,7 @@ module "vm-module" {
   source     = "../../module/vm"
   vms        = var.dev-vms
   subnet_ids = var.dev-subnet
-}
 
+  admin_username       = var.admin_username
+  admin_ssh_public_key = var.admin_ssh_public_key
+}

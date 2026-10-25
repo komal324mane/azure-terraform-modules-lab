@@ -1,0 +1,41 @@
+dev-rgs = {
+  rg1 = "rg-terraform-modules-dev"
+}
+
+dev-vnets = {
+  vnet1 = {
+    nsg_name            = "nsg-terraform-dev-1"
+    location            = "Central India"
+    resource_group_name = "rg-terraform-modules-dev"
+    vnet_name           = "vnet-terraform-dev-1"
+    address_space       = ["10.50.0.0/16"]
+  }
+}
+
+dev-subnet = {
+  subnet1 = {
+    name                 = "snet-terraform-dev-1"
+    resource_group_name  = "rg-terraform-modules-dev"
+    virtual_network_name = "vnet-terraform-dev-1"
+    address_prefixes     = ["10.50.1.0/24"]
+  }
+}
+
+dev-vms = {
+  vm1 = {
+    vms_name             = "vm-terraform-dev-1"
+    location             = "Central India"
+    resource_group_name  = "rg-terraform-modules-dev"
+    subnet_id            = ""
+    vm_size              = "Standard_B2s"
+    nic_name             = "nic-terraform-dev-1"
+    pip_name             = "pip-terraform-dev-1"
+    allocation_method    = "Static"
+    subnet_name          = "snet-terraform-dev-1"
+    virtual_network_name = "vnet-terraform-dev-1"
+  }
+}
+
+admin_username = "azureuser"
+# Replace with the contents of your SSH public key. Never put the private key here.
+admin_ssh_public_key = "REPLACE_WITH_YOUR_SSH_PUBLIC_KEY"

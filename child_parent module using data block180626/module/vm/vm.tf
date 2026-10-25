@@ -1,14 +1,3 @@
-variable "vms" {}
-data "azurerm_subnet" "subnet" {
-  for_each             = var.vms
-  name                 = each.value.subnet_name
-  virtual_network_name = each.value.virtual_network_name
-  resource_group_name  = each.value.resource_group_name
-}
-
-variable "subnet_ids" {
-  type = map(any)
-}
 resource "azurerm_network_interface" "NIC" {
   for_each            = var.vms
   name                = each.value.nic_name
@@ -26,7 +15,7 @@ resource "azurerm_public_ip" "Public_IP" {
   name                = each.value.pip_name
   resource_group_name = each.value.resource_group_name
   location            = each.value.location
-  allocation_method   = "Static"
+  allocation_method   = each.value.allocation_method
 
   tags = {
     environment = "Production"
@@ -39,7 +28,7 @@ resource "azurerm_virtual_machine" "VMS" {
   location              = each.value.location
   resource_group_name   = each.value.resource_group_name
   network_interface_ids = [azurerm_network_interface.NIC[each.key].id]
-  vm_size               = "Standard_DS1_v2"
+  vm_size               = each.value.vm_size
 
   # Uncomment this line to delete the OS disk automatically when deleting the VM
   # delete_os_disk_on_termination = true
@@ -60,12 +49,16 @@ resource "azurerm_virtual_machine" "VMS" {
     managed_disk_type = "Standard_LRS"
   }
   os_profile {
-    computer_name  = "hostname"
-    admin_username = "testadmin"
-    admin_password = "Password1234!"
+    computer_name  = each.value.vms_name
+    admin_username = var.admin_username
   }
   os_profile_linux_config {
-    disable_password_authentication = false
+    disable_password_authentication = true
+
+    ssh_keys {
+      path     = "/home/${var.admin_username}/.ssh/authorized_keys"
+      key_data = var.admin_ssh_public_key
+    }
   }
   tags = {
     environment = "staging"
